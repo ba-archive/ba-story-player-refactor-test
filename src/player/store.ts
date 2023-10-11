@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 const usePlayerStore = defineStore("player", {
   state: () => {
     return {
-      auto: true,
+      auto: false,
       autoTimeOutMs: 1200,
       textDone: true,
       onOption: false,

@@ -28,7 +28,7 @@ export default class StoryPlayer {
   }
   async next() {
     if (this.state !== "playing") {
-      this.currentStoryIndex.value += 1;
+      this.currentStoryIndex.value = this.currentStoryNode.value.nextNodeIndex;
       await this.play();
     }
   }

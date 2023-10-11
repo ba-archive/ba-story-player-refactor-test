@@ -1,5 +1,6 @@
 import { Application, Sprite } from "pixi.js";
 import { HandlerMap, Server, StoryNode } from "../../type";
+import { gsap } from "gsap";
 
 export class BgLayer extends Server {
   bgInstance?: Sprite;
