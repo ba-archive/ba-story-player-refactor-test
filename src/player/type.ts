@@ -280,5 +280,7 @@ export class Server {
     handlerMap;
   }
   async stop() {}
-  async resize(app: Application) {}
+  async resize(app: Application) {
+    app;
+  }
 }

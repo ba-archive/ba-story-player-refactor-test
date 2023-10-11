@@ -29,6 +29,13 @@ export default class NodePlayer {
     }
     await Promise.all(checkPromises);
   }
+  async stop() {
+    const stopPromises: Promise<void>[] = [];
+    for (const server of this.servers) {
+      stopPromises.push(server.stop());
+    }
+    await Promise.all(stopPromises);
+  }
   unMounted() {
     this.app.destroy();
   }

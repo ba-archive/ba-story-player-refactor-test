@@ -67,6 +67,5 @@ export function initBg(background: Sprite, app: Application) {
 
   background.position.set(x, y);
   background.scale.set(scale);
-  console.log(scale);
   app.stage.addChild(background);
 }
