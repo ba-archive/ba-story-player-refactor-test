@@ -1,14 +1,18 @@
 import { Application } from "pixi.js";
 import { HandlerMap, Server, StoryNode } from "../type";
 import { BgLayer } from "../layers/bgLayer";
+import { gsap } from "gsap";
+import { PixiPlugin } from "gsap/PixiPlugin";
+const PIXIHeight = 1012.5;
+gsap.registerPlugin(PixiPlugin);
 
 const registerServers: (typeof Server)[] = [BgLayer];
-export class NodePlayer {
+export default class NodePlayer {
   app: Application;
   handlerMap: HandlerMap;
   servers: Server[];
-  constructor() {
-    this.app = new Application({ width: 1000, height: 1000 });
+  constructor(width: number) {
+    this.app = new Application({ width: width, height: PIXIHeight });
     this.handlerMap = { getBgInstance: () => undefined };
     this.servers = [];
     for (const serverClass of registerServers) {
@@ -23,8 +27,11 @@ export class NodePlayer {
     for (const server of this.servers) {
       checkPromises.push(server.check(node, this.app, this.handlerMap));
     }
+    await Promise.all(checkPromises);
   }
   unMounted() {
     this.app.destroy();
   }
 }
+
+export { PIXIHeight };

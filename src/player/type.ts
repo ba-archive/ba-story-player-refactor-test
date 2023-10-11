@@ -223,7 +223,10 @@ interface RawStoryNode {
       translatior?: string;
     };
   };
-  bg: string;
+  bg: {
+    url: string;
+    overlap?: number;
+  };
   audio: {
     bgm: {
       url: string;
@@ -270,8 +273,6 @@ export class Server {
   constructor(app: Application, handlerMap: HandlerMap) {
     app;
     handlerMap;
-    this.check = () => Promise.resolve();
-    this.stop = () => Promise.resolve();
   }
   async check(storyNode: StoryNode, app: Application, handlerMap: HandlerMap) {
     storyNode;
@@ -279,4 +280,5 @@ export class Server {
     handlerMap;
   }
   async stop() {}
+  async resize(app: Application) {}
 }
