@@ -17,7 +17,7 @@ export class BgLayer extends Server {
         if (node.bg.overlap) {
           newBg.alpha = 0;
           initBg(newBg, app);
-          this.loadBgOverlap(newBg, node.bg.overlap, app);
+          await this.loadBgOverlap(newBg, node.bg.overlap, app);
         } else {
           initBg(newBg, app);
         }
