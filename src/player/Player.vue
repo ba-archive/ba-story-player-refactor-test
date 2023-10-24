@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import NodePlayer, { PIXIHeight } from "./playerSubModules/nodePlayer";
-import StoryPlayer from "./playerSubModules/storyPlayer";
+import StoryManager from "./playerSubModules/storyManager";
 import resourceManager from "./playerSubModules/recourageManager";
 import usePlayerStore from "./store";
 import { StoryNode } from "./type";
@@ -33,7 +33,7 @@ const currentStoryNode = computed(() => {
     return props.storyNodes[props.storyNodes.length - 1];
   }
 });
-const storyPlayer = new StoryPlayer(
+const storyPlayer = new StoryManager(
   props.storyNodes,
   nodePlayer,
   currentStoryIndex,
@@ -91,3 +91,4 @@ onUnmounted(() => {
   }
 }
 </style>
+./playerSubModules/storyManager
