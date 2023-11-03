@@ -13,3 +13,14 @@ export function waitMs(ms: number) {
 export const ZINDEXBASE = {
   bg: 0,
 };
+
+export function timelineToPauseAble(tl: ReturnType<typeof gsap.timeline>) {
+  return {
+    pause() {
+      return new Promise<void>(resolve => {
+        tl.pause();
+        resolve();
+      });
+    },
+  };
+}

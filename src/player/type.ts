@@ -279,7 +279,7 @@ export type CheckMethod<T> = (
 
 export interface Animation<Arg extends Record<string, any>> {
   args: Arg;
-  runningAnimation: ReturnType<(typeof gsap)["timeline"]>[];
+  runningAnimation: { pause: () => Promise<void> }[];
   animate: () => Promise<void>;
   final: () => Promise<void>;
 }

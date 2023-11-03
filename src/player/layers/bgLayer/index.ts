@@ -7,7 +7,7 @@ import {
   Animation,
 } from "../../type";
 import { gsap } from "gsap";
-import { ZINDEXBASE } from "../../utils";
+import { ZINDEXBASE, timelineToPauseAble } from "../../utils";
 
 export class BgLayer extends ServerBase implements Server {
   currentBgUrl: string = "";
@@ -79,7 +79,7 @@ const loadBgOverlapAnimation: Animation<{ instance: Sprite; overlap: number }> =
     async animate() {
       const tl = gsap.timeline();
       this.args.instance.zIndex = ZINDEXBASE.bg + 1;
-      this.runningAnimation.push(tl);
+      this.runningAnimation.push(timelineToPauseAble(tl));
 
       await tl.fromTo(
         this.args.instance,
