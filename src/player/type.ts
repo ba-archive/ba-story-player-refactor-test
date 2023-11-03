@@ -1,4 +1,5 @@
 import { Application, Sprite } from "pixi.js";
+import { gsap } from "gsap";
 
 export type BGEffectType =
   | "BG_ScrollT_0.5"
@@ -269,18 +270,37 @@ export type StoryNode = PersistStoryNode &
 export interface HandlerMap {
   getBgInstance: () => Sprite | undefined;
 }
-export class Server {
+export type CheckMethod<T> = (
+  thisArg: T,
+  storyNode: StoryNode,
+  app: Application,
+  handlerMap: HandlerMap
+) => Promise<void>;
+
+export interface Animation<Arg extends Record<string, any>> {
+  args: Arg;
+  runningAnimation: ReturnType<(typeof gsap)["timeline"]>[];
+  animate: () => Promise<void>;
+  final: () => Promise<void>;
+}
+
+export class ServerBase {
+  checkMethods: CheckMethod<this>[] = [];
   constructor(app: Application, handlerMap: HandlerMap) {
     app;
     handlerMap;
   }
   async check(storyNode: StoryNode, app: Application, handlerMap: HandlerMap) {
-    storyNode;
-    app;
-    handlerMap;
+    await Promise.all(
+      this.checkMethods.map(method => method(this, storyNode, app, handlerMap))
+    );
   }
-  async stop() {}
-  async resize(app: Application) {
-    app;
+  addCheckMethod(method: CheckMethod<this>) {
+    this.checkMethods.push(method);
   }
+}
+
+export interface Server {
+  animations: Record<string, Animation<any>>;
+  instances: Record<string, any>;
 }

@@ -1,46 +1,28 @@
 import { Application, Sprite } from "pixi.js";
-import { HandlerMap, Server, StoryNode } from "../../type";
+import {
+  HandlerMap,
+  ServerBase,
+  CheckMethod,
+  Server,
+  Animation,
+} from "../../type";
 import { gsap } from "gsap";
+import { ZINDEXBASE } from "../../utils";
 
-export class BgLayer extends Server {
-  bgInstance?: Sprite;
-  currentBgUrl: string;
+export class BgLayer extends ServerBase implements Server {
+  currentBgUrl: string = "";
+  animations: { bgOverlap: typeof loadBgOverlapAnimation } = {
+    bgOverlap: loadBgOverlapAnimation,
+  };
+  instances: { bgInstance?: Sprite } = {};
   constructor(app: Application, handlerMap: HandlerMap) {
     super(app, handlerMap);
-    handlerMap.getBgInstance = () => this.bgInstance;
-    this.currentBgUrl = "";
-  }
-  async check(node: StoryNode, app: Application) {
-    if (node.bg) {
-      if (node.bg.url !== this.currentBgUrl) {
-        const newBg = Sprite.from(node.bg.url);
-        if (node.bg.overlap) {
-          newBg.alpha = 0;
-          initBg(newBg, app);
-          await this.loadBgOverlap(newBg, node.bg.overlap, app);
-        } else {
-          initBg(newBg, app);
-        }
-        this.bgInstance = newBg;
-      }
-    }
-  }
-  async loadBgOverlap(instance: Sprite, overlap: number, app: Application) {
-    const oldInstance = this.bgInstance;
-    const tl = gsap.timeline();
-    instance.zIndex = -99;
-
-    await tl.fromTo(
-      instance,
-      { alpha: 0 },
-      { alpha: 1, duration: overlap / 1000 }
-    );
-
-    oldInstance && app.stage.removeChild(oldInstance);
+    handlerMap.getBgInstance = () => this.instances.bgInstance;
+    this.addCheckMethod(loadBg);
   }
   async resize(app: Application) {
-    if (this.bgInstance) {
-      initBg(this.bgInstance, app);
+    if (this.instances.bgInstance) {
+      initBg(this.instances.bgInstance, app);
     }
   }
 }
@@ -48,7 +30,7 @@ export class BgLayer extends Server {
 const StandardWith = 1902;
 const StandardWithPadding = 64;
 /**
- * 计算图片 cover 样式尺寸 - utils
+ * 计算图片 cover 样式尺寸并初始化
  */
 export function initBg(background: Sprite, app: Application) {
   // 计算规则
@@ -68,5 +50,47 @@ export function initBg(background: Sprite, app: Application) {
 
   background.position.set(x, y);
   background.scale.set(scale);
+  background.zIndex = ZINDEXBASE.bg;
   app.stage.addChild(background);
 }
+
+const loadBg: CheckMethod<BgLayer> = async function (thisArg, node, app) {
+  if (node.bg) {
+    if (node.bg.url !== thisArg.currentBgUrl) {
+      const newBg = Sprite.from(node.bg.url);
+      if (node.bg.overlap) {
+        newBg.alpha = 0;
+        initBg(newBg, app);
+        const bgOverlap = thisArg.animations.bgOverlap;
+        bgOverlap.args = { instance: newBg, overlap: node.bg.overlap };
+        await thisArg.animations.bgOverlap.animate();
+      } else {
+        initBg(newBg, app);
+      }
+      thisArg.instances.bgInstance = newBg;
+    }
+  }
+};
+
+const loadBgOverlapAnimation: Animation<{ instance: Sprite; overlap: number }> =
+  {
+    args: { instance: new Sprite(), overlap: 0 },
+    runningAnimation: [],
+    async animate() {
+      const tl = gsap.timeline();
+      this.args.instance.zIndex = ZINDEXBASE.bg + 1;
+      this.runningAnimation.push(tl);
+
+      await tl.fromTo(
+        this.args.instance,
+        { alpha: 0 },
+        { alpha: 1, duration: this.args.overlap / 1000 }
+      );
+    },
+    async final() {
+      for (const animation of this.runningAnimation) {
+        animation.pause();
+      }
+      this.args.instance.alpha = 1;
+    },
+  };
