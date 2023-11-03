@@ -284,8 +284,10 @@ export interface Animation<Arg extends Record<string, any>> {
   final: () => Promise<void>;
 }
 
-export class ServerBase {
+export class Server {
   checkMethods: CheckMethod<this>[] = [];
+  animations: Record<string, Animation<any>> = {};
+  instances: Record<string, any> = {};
   constructor(app: Application, handlerMap: HandlerMap) {
     app;
     handlerMap;
@@ -298,9 +300,4 @@ export class ServerBase {
   addCheckMethod(method: CheckMethod<this>) {
     this.checkMethods.push(method);
   }
-}
-
-export interface Server {
-  animations: Record<string, Animation<any>>;
-  instances: Record<string, any>;
 }

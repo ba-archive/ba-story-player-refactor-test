@@ -1,3 +1,3 @@
-import { ServerBase } from "../../type";
+import { Server } from "../../type";
 
-export class TextLayerServer extends ServerBase {}
+export class TextLayerServer extends Server {}
