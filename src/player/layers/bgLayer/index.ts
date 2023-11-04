@@ -1,9 +1,9 @@
 import { Application, Sprite } from "pixi.js";
-import { HandlerMap, Server, CheckMethod, Animation } from "../../type";
+import { HandlerMap, Layer, CheckMethod, Animation } from "../../type";
 import { gsap } from "gsap";
 import { ZINDEXBASE, timelineToPauseAble } from "../../utils";
 
-export class BgLayer extends Server {
+export class BgLayer extends Layer {
   currentBgUrl: string = "";
   animations: { bgOverlap: typeof loadBgOverlapAnimation } = {
     bgOverlap: loadBgOverlapAnimation,

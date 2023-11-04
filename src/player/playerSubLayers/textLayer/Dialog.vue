@@ -13,7 +13,9 @@ const dialogContent = ref("");
 props.textLayerInstance.addCheckMethod(async node => {
   if (node.text.dialog) {
     const dialogInfo = node.text.dialog;
-    dialogContent.value = dialogInfo.content;
+    dialogContent.value = dialogInfo.content.reduce((pre, current) => {
+      return pre + current.content;
+    }, "");
   } else {
     dialogContent.value = "";
   }

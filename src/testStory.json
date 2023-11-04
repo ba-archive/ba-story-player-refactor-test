@@ -35,7 +35,7 @@
     "audio": {},
     "text": {
       "dialog": {
-        "content": "一些对话例子"
+        "content": [{ "content": "一些对话例子", "effects": [] }]
       }
     },
     "effect": {},

@@ -1,5 +1,5 @@
 import { Ref } from "vue";
-import { HandlerMap, Server } from "../../type";
+import { HandlerMap, Layer } from "../../type";
 import { Application } from "pixi.js";
 
-export class TextLayer extends Server {}
+export class TextLayer extends Layer {}

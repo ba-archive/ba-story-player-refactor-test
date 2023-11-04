@@ -1,5 +1,4 @@
 import { Application, Sprite } from "pixi.js";
-import { gsap } from "gsap";
 
 export type BGEffectType =
   | "BG_ScrollT_0.5"
@@ -95,7 +94,7 @@ export interface Character {
    * 人物表情
    */
   face: string;
-  state: "highlight" | "signal" | null;
+  state: "highlight" | "signal" | "closeup" | null;
   /**
    * 人物特效
    */
@@ -214,15 +213,32 @@ interface RawStoryNode {
   text: {
     st: StText[];
     dialog: {
-      content: string;
+      content: Text[];
       speaker?: Speaker;
     };
     popupImage: string;
-    action: {
-      type: "showTitle" | "showPlace";
-      arg: string;
-      translatior?: string;
-    };
+    popupVideo: string;
+    action:
+      | {
+          type: "showTitle";
+          arg: {
+            title: Text;
+            subTitle: Text;
+          };
+          translatior?: string;
+        }
+      | {
+          type: "showPlace";
+          arg: string;
+          translatior?: string;
+        }
+      | {
+          type: "toBeContinue";
+        }
+      | {
+          type: "nextEpisode";
+          arg: Text;
+        };
   };
   bg: {
     url: string;
@@ -284,7 +300,7 @@ export interface Animation<Arg extends Record<string, any>> {
   final: () => Promise<void>;
 }
 
-export class Server {
+export class Layer {
   checkMethods: CheckMethod<this>[] = [];
   animations: Record<string, Animation<any>> = {};
   instances: Record<string, any> = {};
