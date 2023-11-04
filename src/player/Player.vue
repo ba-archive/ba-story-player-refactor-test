@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import NodePlayer, { PIXIHeight } from "./playerSubModules/nodePlayer";
 import StoryManager from "./playerSubModules/storyManager";
 import resourceManager, {
   setDataUrl,
 } from "./playerSubModules/recourageManager";
-import { ResourceMap, StoryNode } from "./type";
-import Dialog from "./playerSubLayers/textLayer/Dialog.vue";
+import { ResourceMap, StoryNode, Ii8nString } from "./type";
+import Dialog from "./playerSubLayers/showLayer/Dialog.vue";
 const props = defineProps<{
   storyNodes: StoryNode[];
   dataUrl: string;
   height: number;
   width: number;
+  language: keyof Ii8nString;
   endCallback: () => void;
 }>();
 setDataUrl(props.dataUrl);
@@ -21,6 +22,14 @@ nodePlayer.handlerMap.getResources = <T extends keyof ResourceMap>(
   type: T,
   key: string
 ) => resourceManager.getResource(type, key);
+const language = ref(props.language);
+nodePlayer.serversInstance.show.language = language;
+watch(
+  () => props.language,
+  newVal => {
+    language.value = newVal;
+  }
+);
 
 const playerStyle = computed(() => {
   return {
@@ -76,7 +85,10 @@ onUnmounted(() => {
 <template>
   <div @click="storyManager.next" class="player" :style="playerStyle">
     <div ref="pixiCanvas"></div>
-    <Dialog :text-layer-instance="nodePlayer.serversInstance.text"></Dialog>
+    <Dialog
+      :text-layer-instance="nodePlayer.serversInstance.show"
+      :current-story-node="currentStoryNode"
+    ></Dialog>
   </div>
 </template>
 

@@ -3,13 +3,13 @@ import { HandlerMap, StoryNode } from "../type";
 import { BgLayer } from "../layers/bgLayer";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { TextLayer } from "../playerSubLayers/textLayer";
+import { ShowLayer } from "../playerSubLayers/showLayer";
 const PIXIHeight = 1012.5;
 gsap.registerPlugin(PixiPlugin);
 
 const registerServers = {
   bg: BgLayer,
-  text: TextLayer,
+  show: ShowLayer,
 };
 type RegisterServers = typeof registerServers;
 type ServerInstances = {

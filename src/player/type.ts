@@ -167,7 +167,7 @@ export interface Speaker {
 
 export type StArgs = [number[], "serial" | "instant" | "smooth", number];
 export type StText = {
-  text: string;
+  text: Text[];
   args: StArgs;
   middle: boolean;
 };
@@ -193,11 +193,18 @@ export interface TextEffect {
    */
   value: string[];
 }
+export interface Ii8nString {
+  jp: string;
+  cn?: string;
+  tw?: string;
+  en?: string;
+}
+export type Language = keyof Ii8nString;
 export interface Text {
   /**
    * 文本
    */
-  content: string;
+  content: Ii8nString;
   /**
    * 显示文本前等待的时间
    */
@@ -229,7 +236,7 @@ interface RawStoryNode {
         }
       | {
           type: "showPlace";
-          arg: string;
+          arg: Text;
           translatior?: string;
         }
       | {

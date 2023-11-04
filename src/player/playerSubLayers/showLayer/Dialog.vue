@@ -5,19 +5,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { TextLayer } from ".";
+import { computed } from "vue";
+import { ShowLayer } from ".";
+import { StoryNode } from "../../type";
 
-const props = defineProps<{ textLayerInstance: TextLayer }>();
-const dialogContent = ref("");
-props.textLayerInstance.addCheckMethod(async node => {
-  if (node.text.dialog) {
-    const dialogInfo = node.text.dialog;
-    dialogContent.value = dialogInfo.content.reduce((pre, current) => {
-      return pre + current.content;
+const props = defineProps<{
+  textLayerInstance: ShowLayer;
+  currentStoryNode: StoryNode;
+}>();
+const dialogContent = computed(() => {
+  const dialogInfo = props.currentStoryNode.text.dialog;
+  if (dialogInfo) {
+    return dialogInfo.content.reduce((pre, currentText) => {
+      return pre + currentText.content[props.textLayerInstance.language.value];
     }, "");
-  } else {
-    dialogContent.value = "";
   }
 });
 </script>
