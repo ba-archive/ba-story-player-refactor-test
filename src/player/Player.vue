@@ -2,17 +2,25 @@
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import NodePlayer, { PIXIHeight } from "./playerSubModules/nodePlayer";
 import StoryManager from "./playerSubModules/storyManager";
-import resourceManager from "./playerSubModules/recourageManager";
-import { StoryNode } from "./type";
+import resourceManager, {
+  setDataUrl,
+} from "./playerSubModules/recourageManager";
+import { ResourceMap, StoryNode } from "./type";
 import Dialog from "./playerSubLayers/textLayer/Dialog.vue";
 const props = defineProps<{
   storyNodes: StoryNode[];
+  dataUrl: string;
   height: number;
   width: number;
   endCallback: () => void;
 }>();
+setDataUrl(props.dataUrl);
 const pixiWidth = computed(() => (PIXIHeight * props.width) / props.height);
 const nodePlayer = new NodePlayer(pixiWidth.value);
+nodePlayer.handlerMap.getResources = <T extends keyof ResourceMap>(
+  type: T,
+  key: string
+) => resourceManager.getResource(type, key);
 
 const playerStyle = computed(() => {
   return {

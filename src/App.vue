@@ -13,6 +13,7 @@ const flag = ref(true);
   <Player
     :height="500"
     :width="1000"
+    data-url="https://yuuka.cdn.diyigemt.com/image/ba-all-data"
     :story-nodes="storyNodes"
     v-if="flag"
     :end-callback="

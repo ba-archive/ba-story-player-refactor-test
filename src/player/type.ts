@@ -260,8 +260,13 @@ interface RawStoryNode {
     | {
         state: "start";
         startArg: L2DStartArg;
+        spineUrl: string;
       }
-    | { state: "playing"; currentAnimation: string };
+    | {
+        state: "playing";
+        currentAnimation: string;
+        spineUrl: string;
+      };
   effect: {
     bgEffect: BGEffectExcelTableItem;
     action: OtherEffect;
@@ -283,7 +288,17 @@ export type StoryNode = PersistStoryNode &
   ParticalStoryNode &
   FinalPartialPropertyStoryNode;
 
+export interface ResourceMap {
+  img: Sprite;
+  video: Sprite;
+  audio: Howl;
+}
+
 export interface HandlerMap {
+  getResources: <T extends keyof ResourceMap>(
+    type: T,
+    key: string
+  ) => ResourceMap[T] | undefined;
   getBgInstance: () => Sprite | undefined;
 }
 export type CheckMethod<T> = (
@@ -314,7 +329,6 @@ export class Layer {
         return method.call(this, storyNode, app, handlerMap);
       })
     );
-    console.log(this, "check done");
   }
   addCheckMethod(method: CheckMethod<this>) {
     this.checkMethods.push(method);

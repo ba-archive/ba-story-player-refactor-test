@@ -48,23 +48,27 @@ export function initBg(background: Sprite, app: Application) {
   app.stage.addChild(background);
 }
 
-const loadBg: CheckMethod<BgLayer> = async function (node, app) {
+const loadBg: CheckMethod<BgLayer> = async function (node, app, handlerMap) {
   if (node.bg) {
     if (node.bg.url !== this.currentBgUrl) {
-      const newBg = Sprite.from(node.bg.url);
-      if (node.bg.overlap) {
-        newBg.alpha = 0;
-        initBg(newBg, app);
-        const bgOverlap = this.animations.bgOverlap;
-        bgOverlap.args = { instance: newBg, overlap: node.bg.overlap };
-        await this.animations.bgOverlap.animate();
-        if (this.instances.bgInstance) {
-          app.stage.removeChild(this.instances.bgInstance);
-        }
+      const newBg = handlerMap.getResources<"img">("img", node.bg.url);
+      if (!newBg) {
+        throw new Error("获取bg资源失败");
       } else {
-        initBg(newBg, app);
+        if (node.bg.overlap) {
+          newBg.alpha = 0;
+          initBg(newBg, app);
+          const bgOverlap = this.animations.bgOverlap;
+          bgOverlap.args = { instance: newBg, overlap: node.bg.overlap };
+          await this.animations.bgOverlap.animate();
+          if (this.instances.bgInstance) {
+            app.stage.removeChild(this.instances.bgInstance);
+          }
+        } else {
+          initBg(newBg, app);
+        }
+        this.instances.bgInstance = newBg;
       }
-      this.instances.bgInstance = newBg;
     }
   }
 };

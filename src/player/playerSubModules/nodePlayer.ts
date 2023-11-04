@@ -23,7 +23,7 @@ export default class NodePlayer {
   serversInstance: ServerInstances;
   constructor(width: number) {
     this.app = new Application({ width: width, height: PIXIHeight });
-    this.handlerMap = { getBgInstance: () => undefined };
+    this.handlerMap = {} as HandlerMap;
     const tempInstances: Record<string, any> = {};
     for (const key of Object.keys(registerServers) as Array<
       keyof RegisterServers
