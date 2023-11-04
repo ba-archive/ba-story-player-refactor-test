@@ -33,7 +33,11 @@
   {
     "ui": { "menuState": true },
     "audio": {},
-    "text": {},
+    "text": {
+      "dialog": {
+        "content": "一些对话例子"
+      }
+    },
     "effect": {},
     "bg": {
       "url": "https://yuuka.cdn.diyigemt.com/image/ba-all-data/UIs/03_Scenario/01_Background/BG_CS_PV4_052.jpg"

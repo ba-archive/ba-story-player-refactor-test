@@ -48,20 +48,23 @@ export function initBg(background: Sprite, app: Application) {
   app.stage.addChild(background);
 }
 
-const loadBg: CheckMethod<BgLayer> = async function (thisArg, node, app) {
+const loadBg: CheckMethod<BgLayer> = async function (node, app) {
   if (node.bg) {
-    if (node.bg.url !== thisArg.currentBgUrl) {
+    if (node.bg.url !== this.currentBgUrl) {
       const newBg = Sprite.from(node.bg.url);
       if (node.bg.overlap) {
         newBg.alpha = 0;
         initBg(newBg, app);
-        const bgOverlap = thisArg.animations.bgOverlap;
+        const bgOverlap = this.animations.bgOverlap;
         bgOverlap.args = { instance: newBg, overlap: node.bg.overlap };
-        await thisArg.animations.bgOverlap.animate();
+        await this.animations.bgOverlap.animate();
+        if (this.instances.bgInstance) {
+          app.stage.removeChild(this.instances.bgInstance);
+        }
       } else {
         initBg(newBg, app);
       }
-      thisArg.instances.bgInstance = newBg;
+      this.instances.bgInstance = newBg;
     }
   }
 };

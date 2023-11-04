@@ -271,7 +271,7 @@ export interface HandlerMap {
   getBgInstance: () => Sprite | undefined;
 }
 export type CheckMethod<T> = (
-  thisArg: T,
+  this: T,
   storyNode: StoryNode,
   app: Application,
   handlerMap: HandlerMap
@@ -294,10 +294,13 @@ export class Server {
   }
   async check(storyNode: StoryNode, app: Application, handlerMap: HandlerMap) {
     await Promise.all(
-      this.checkMethods.map(method => method(this, storyNode, app, handlerMap))
+      this.checkMethods.map(method => {
+        method.call(this, storyNode, app, handlerMap);
+      })
     );
   }
   addCheckMethod(method: CheckMethod<this>) {
     this.checkMethods.push(method);
   }
+  async stop() {}
 }

@@ -5,6 +5,7 @@ import StoryManager from "./playerSubModules/storyManager";
 import resourceManager from "./playerSubModules/recourageManager";
 import usePlayerStore from "./store";
 import { StoryNode } from "./type";
+import Dialog from "./playerSubLayers/textLayer/Dialog.vue";
 const props = defineProps<{
   storyNodes: StoryNode[];
   height: number;
@@ -13,6 +14,7 @@ const props = defineProps<{
 }>();
 const pixiWidth = computed(() => (PIXIHeight * props.width) / props.height);
 const nodePlayer = new NodePlayer(pixiWidth.value);
+Reflect.set(window, "handlerMap", nodePlayer.handlerMap);
 const playerStyle = computed(() => {
   return {
     height: `${props.height}px`,
@@ -46,6 +48,7 @@ const pixiScale = computed(
   //比实际放大一点放置并隐藏解决缩放不精确的问题
   () => `scale(${(props.height + 1) / PIXIHeight})`
 );
+
 onMounted(async () => {
   nodePlayer.mouted(pixiCanvas.value!);
   await resourceManager.init();
@@ -60,12 +63,7 @@ onUnmounted(() => {
 <template>
   <div @click="storyPlayer.next" class="player" :style="playerStyle">
     <div ref="pixiCanvas"></div>
-    <div class="dialog">
-      <p>
-        some dialog msgs<span @click.stop="console.log('popup!')">popup</span>
-        more msgs
-      </p>
-    </div>
+    <Dialog :text-layer-instance="nodePlayer.serversInstance.text"></Dialog>
   </div>
 </template>
 
@@ -73,13 +71,6 @@ onUnmounted(() => {
 .player {
   position: relative;
   overflow: hidden;
-  .dialog {
-    bottom: 0;
-    width: 100%;
-    height: 30%;
-    background-color: blue;
-    position: absolute;
-  }
 }
 </style>
 
@@ -91,4 +82,3 @@ onUnmounted(() => {
   }
 }
 </style>
-./playerSubModules/storyManager
