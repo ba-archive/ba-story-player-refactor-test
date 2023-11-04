@@ -311,12 +311,17 @@ export class Layer {
   async check(storyNode: StoryNode, app: Application, handlerMap: HandlerMap) {
     await Promise.all(
       this.checkMethods.map(method => {
-        method.call(this, storyNode, app, handlerMap);
+        return method.call(this, storyNode, app, handlerMap);
       })
     );
+    console.log(this, "check done");
   }
   addCheckMethod(method: CheckMethod<this>) {
     this.checkMethods.push(method);
   }
-  async stop() {}
+  async stop() {
+    await Promise.all(
+      Object.values(this.animations).map(animation => animation.final())
+    );
+  }
 }

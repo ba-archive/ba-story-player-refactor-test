@@ -35,23 +35,9 @@ export default class StoryPlayer {
 
   async play() {
     this.state = "playing";
-    const { auto, textDone, onOption, autoTimeOutMs } = storeToRefs(
-      usePlayerStore()
-    );
-    await this.nodePlayer.playNode(this.currentStoryNode.value);
-    const checkTextDone = (resolve: () => void) => {
-      if (textDone.value) {
-        resolve();
-      } else {
-        requestAnimationFrame(() => {
-          checkTextDone(resolve);
-        });
-      }
-    };
+    const { auto, onOption, autoTimeOutMs } = storeToRefs(usePlayerStore());
     try {
-      await new Promise<void>(resolve => {
-        checkTextDone(resolve);
-      });
+      await this.nodePlayer.playNode(this.currentStoryNode.value);
     } catch (error) {
       this.errorCallback();
     }

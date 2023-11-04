@@ -14,7 +14,7 @@ const props = defineProps<{
 }>();
 const pixiWidth = computed(() => (PIXIHeight * props.width) / props.height);
 const nodePlayer = new NodePlayer(pixiWidth.value);
-Reflect.set(window, "handlerMap", nodePlayer.handlerMap);
+
 const playerStyle = computed(() => {
   return {
     height: `${props.height}px`,
@@ -35,7 +35,7 @@ const currentStoryNode = computed(() => {
     return props.storyNodes[props.storyNodes.length - 1];
   }
 });
-const storyPlayer = new StoryManager(
+const storyManager = new StoryManager(
   props.storyNodes,
   nodePlayer,
   currentStoryIndex,
@@ -49,11 +49,15 @@ const pixiScale = computed(
   () => `scale(${(props.height + 1) / PIXIHeight})`
 );
 
+if (import.meta.env.DEV) {
+  Reflect.set(window, "nodePlayer", nodePlayer);
+  Reflect.set(window, "StoryManager", storyManager);
+}
 onMounted(async () => {
   nodePlayer.mouted(pixiCanvas.value!);
   await resourceManager.init();
   await resourceManager.load(props.storyNodes);
-  await storyPlayer.play();
+  await storyManager.play();
 });
 onUnmounted(() => {
   nodePlayer.unMounted();
@@ -61,7 +65,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div @click="storyPlayer.next" class="player" :style="playerStyle">
+  <div @click="storyManager.next" class="player" :style="playerStyle">
     <div ref="pixiCanvas"></div>
     <Dialog :text-layer-instance="nodePlayer.serversInstance.text"></Dialog>
   </div>
