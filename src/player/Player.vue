@@ -3,7 +3,6 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import NodePlayer, { PIXIHeight } from "./playerSubModules/nodePlayer";
 import StoryManager from "./playerSubModules/storyManager";
 import resourceManager from "./playerSubModules/recourageManager";
-import usePlayerStore from "./store";
 import { StoryNode } from "./type";
 import Dialog from "./playerSubLayers/textLayer/Dialog.vue";
 const props = defineProps<{
@@ -23,6 +22,7 @@ const playerStyle = computed(() => {
 });
 
 const currentStoryIndex = ref(0);
+const auto = ref(false);
 const currentStoryNode = computed(() => {
   if (
     currentStoryIndex.value >= 0 &&
@@ -31,7 +31,7 @@ const currentStoryNode = computed(() => {
     return props.storyNodes[currentStoryIndex.value];
   } else {
     props.endCallback();
-    usePlayerStore().auto = false;
+    auto.value = false;
     return props.storyNodes[props.storyNodes.length - 1];
   }
 });
@@ -40,6 +40,7 @@ const storyManager = new StoryManager(
   nodePlayer,
   currentStoryIndex,
   currentStoryNode,
+  auto,
   () => {}
 );
 const pixiCanvas = ref<HTMLDivElement>();

@@ -1,22 +1,23 @@
 import { StoryNode } from "../type";
 import NodePlayer from "./nodePlayer";
 import { ComputedRef, Ref } from "vue";
-import { storeToRefs } from "pinia";
-import usePlayerStore from "../store";
 import { waitMs } from "../utils";
 
-export default class StoryPlayer {
+export default class StoryManager {
   currentStoryIndex: Ref<number>;
   currentStoryNode: ComputedRef<StoryNode>;
   storyNodes: StoryNode[];
   nodePlayer: NodePlayer;
   state: "playing" | "done";
+  auto: Ref<boolean>;
+  autoTimeOutMs: number = 1500;
   errorCallback: () => void;
   constructor(
     storyNodes: StoryNode[],
     nodePlayer: NodePlayer,
     currentStoryIndex: Ref<number>,
     currentStoryNode: ComputedRef<StoryNode>,
+    auto: Ref<boolean>,
     errorCallback: () => void
   ) {
     this.currentStoryIndex = currentStoryIndex;
@@ -25,6 +26,7 @@ export default class StoryPlayer {
     this.currentStoryNode = currentStoryNode;
     this.errorCallback = errorCallback;
     this.state = "done";
+    this.auto = auto;
   }
   async next() {
     if (this.state !== "playing") {
@@ -35,7 +37,6 @@ export default class StoryPlayer {
 
   async play() {
     this.state = "playing";
-    const { auto, onOption, autoTimeOutMs } = storeToRefs(usePlayerStore());
     try {
       await this.nodePlayer.playNode(this.currentStoryNode.value);
     } catch (error) {
@@ -43,9 +44,9 @@ export default class StoryPlayer {
     }
 
     this.state = "done";
-    if (auto.value && !onOption.value) {
-      await waitMs(autoTimeOutMs.value);
-      if (auto.value) {
+    if (this.auto.value) {
+      await waitMs(this.autoTimeOutMs);
+      if (this.auto.value && this.currentStoryNode.value.ui.option) {
         this.next();
       }
     }
